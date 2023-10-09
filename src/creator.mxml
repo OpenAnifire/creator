@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:anifire="anifire.*"
+			   xmlns:browser="anifire.browser.*"
+			   xmlns:bComponents="anifire.browser.components.*"
+			   minWidth="960"
+			   minHeight="600"
+			   preinitialize="initApp()"
+			   applicationComplete="onApplicationComplete()"
+			   backgroundColor="0xEEEEEE" viewSourceURL="srcview/index.html">
+
+	<fx:Script>
+		<![CDATA[
+			import anifire.creator.core.CcConsole;
+			import anifire.util.Util;
+			import anifire.util.UtilErrorLogger;
+
+			private var _ccConsole:CcConsole;
+			private var _componentInit:Boolean;
+			private var _resourceInit:Boolean;
+			protected var pendingStyleSheets:int;
+			protected var localFlashVars:Boolean;
+			protected var skipLocale:Boolean;
+			protected var localClientTheme:Boolean;
+
+			private function initApp() : void
+			{
+				if(this.skipLocale)
+				{
+					this.onClientLocaleComplete();
+				}
+				else
+				{
+					Util.loadClientLocale("go",this.onClientLocaleComplete);
+				}
+			}
+			
+			private function onClientLocaleComplete(param1:Event = null) : void
+			{
+				this.resourceComplete();
+			}
+			
+			private function uncaughtErrorHandler(param1:UncaughtErrorEvent) : void
+			{
+				UtilErrorLogger.getInstance().fatal("uncaughtErrorHandler: " + new Error().getStackTrace());
+			}
+			
+			private function onApplicationComplete() : void
+			{
+				this._componentInit = true;
+				if(this._resourceInit)
+				{
+					this.initialConsole();
+				}
+			}
+			
+			private function resourceComplete() : void
+			{
+				this._resourceInit = true;
+				if(this._componentInit)
+				{
+					this.initialConsole();
+				}
+			}
+			
+			private function initialConsole() : void
+			{
+				var _loc1_:AppConfigManager = AppConfigManager.instance;
+				var _loc2_:String = _loc1_.getValue(ServerConstants.FLASHVAR_SITE_ID);
+				CcConsole.setConfiguration(new GoAnimate());
+				CcConsole.initializeCcConsole(this,this,this);
+				this._ccConsole = CcConsole.getCcConsole();
+				this._ccConsole.addEventListener(CcCoreEvent.LOAD_EVERYTHING_COMPLETE,this.loadComplete);
+			}
+			
+			private function loadComplete(param1:Event) : void
+			{
+				this.setCurrentState("ready");
+			}
+		]]>
+	</fx:Script>
+
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+
+		global
+		{
+			modalTransparency: 0.7;
+			modalTransparencyColor: "0x000000";
+		}
+		s|Application
+		{
+			font-size: 13;
+		}
+		s|TextBase,
+		s|SkinnableTextBase,
+		s|RichEditableText
+		{
+			fontLookup: embeddedCFF;
+			color: #515969;
+			fontStyle: "normal";
+			fontFamily: "StudioSparkMain"
+		}
+		s|Label#promptDisplay
+		{
+			color: #CCCCCC;
+			fontStyle: "normal";
+		}
+		s|TextInput {
+			borderColor: #CACAD4;
+			skinClass: ClassReference("anifire.browser.skins.DefaultTextInputSkin");
+		}
+		
+		
+		@font-face {
+			embedAsCFF: true;
+			src: url("fonts/files/Lato-Regular.ttf");
+			font-family: StudioSparkMain;
+		}
+		@font-face {
+			embedAsCFF: true;
+			src: url("fonts/files/Lato-Italic.ttf");
+			font-weight: 400;
+			font-style: italic;
+			font-family: StudioSparkMain;
+		}
+		@font-face {
+			embedAsCFF: true;
+			src: url("fonts/files/Lato-Bold.ttf");
+			font-weight: 700;
+			font-family: StudioSparkMain;
+		}
+	</fx:Style>
+
+	<s:states>
+		<s:State name="loading"/>
+		<s:State name="ready"/>
+	</s:states>
+
+</s:Application>
