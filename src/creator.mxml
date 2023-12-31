@@ -3,19 +3,24 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark"
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   xmlns:anifire="anifire.*"
-			   xmlns:browser="anifire.browser.*"
-			   xmlns:bComponents="anifire.browser.components.*"
-			   minWidth="960"
-			   minHeight="600"
-			   preinitialize="initApp()"
-			   applicationComplete="onApplicationComplete()"
-			   backgroundColor="0xEEEEEE" viewSourceURL="srcview/index.html">
+			   xmlns:component="anifire.component.*"
+			   xmlns:components="anifire.creator.components.*"
+			   width="960" height="600" preinitialize="initApp()" applicationComplete="onApplicationComplete()"
+			   backgroundAlpha="0" backgroundColor="0xFDFDFD" creationPolicy="auto"
+			   implements="anifire.creator.interfaces.ICcCharEditorContainer, anifire.creator.interfaces.ICcMainUiContainer, anifire.creator.interfaces.ICcPreviewAndSaveContainer"
+			   >
 
 	<fx:Script>
 		<![CDATA[
+			import anifire.constant.ServerConstants;
+			import anifire.creator.components.BodyShapeChooser;
+			import anifire.creator.config.GoAnimate;
 			import anifire.creator.core.CcConsole;
+			import anifire.creator.events.CcCoreEvent;
+			import anifire.managers.AppConfigManager;
 			import anifire.util.Util;
 			import anifire.util.UtilErrorLogger;
+			import anifire.utils.SecurityUtils;
 
 			private var _ccConsole:CcConsole;
 			private var _componentInit:Boolean;
@@ -24,6 +29,8 @@
 			protected var localFlashVars:Boolean;
 			protected var skipLocale:Boolean;
 			protected var localClientTheme:Boolean;
+
+			SecurityUtils.init();
 
 			private function initApp() : void
 			{
@@ -70,7 +77,7 @@
 				var _loc1_:AppConfigManager = AppConfigManager.instance;
 				var _loc2_:String = _loc1_.getValue(ServerConstants.FLASHVAR_SITE_ID);
 				CcConsole.setConfiguration(new GoAnimate());
-				CcConsole.initializeCcConsole(this,this,this);
+				CcConsole.initializeCcConsole(this, this, this);
 				this._ccConsole = CcConsole.getCcConsole();
 				this._ccConsole.addEventListener(CcCoreEvent.LOAD_EVERYTHING_COMPLETE,this.loadComplete);
 			}
@@ -79,21 +86,145 @@
 			{
 				this.setCurrentState("ready");
 			}
+
+			public function get ui_main_ViewStack() : Group
+			{
+				return this.mainViewStack;
+			}
+			
+			public function get ui_main_ccCharEditor() : Group
+			{
+				return this._ce_mainViewStack;
+			}
+			
+			public function get ui_main_ccCharPreviewAndSaveScreen() : Group
+			{
+				return this.ccCharPreviewAndSaveScreen;
+			}
+			
+			public function get ui_ps_charPreviewer() : CharPreviewer
+			{
+				return this.ps_charPreviewer;
+			}
+			
+			public function get ui_ps_interactionViewStack() : Group
+			{
+				return this.ps_interactionViewStack;
+			}
+			
+			public function get ui_ps_charPreviewCanvas() : Group
+			{
+				return this.ps_charPreviewCanvas;
+			}
+			
+			public function get ui_ps_charPreviewOptionBox() : CharPreviewOption
+			{
+				return this.ps_charPreviewOptionBox;
+			}
+			
+			/*public function get ui_ce_bodyShapeMegaChooser() : BodyShapeMegaChooser
+			{
+				return this._ce_bodyShapeMegaChooser;
+			}
+			
+			public function get ui_ce_bodyShapeChooser() : BodyShapeChooser
+			{
+				return this._ce_bodyShapeMegaChooser.bodyShapeChooser;
+			}*/
+			
+			public function get ui_ce_componentTypeChooser() : TypeChooserSpark
+			{
+				return this._ce_componentTypeChooser;
+			}
+			
+			public function get ui_ce_charPreviewer() : CharPreviewer
+			{
+				return this._ce_charPreviewer;
+			}
+			
+			public function get ui_ce_facePreviewer() : CharPreviewer
+			{
+				return this._ce_facePreviewer.face;
+			}
+			
+			public function get ui_ce_colorPicker() : CcColorPickers
+			{
+				return this._ce_colorPicker;
+			}
+			
+			public function get ui_ce_buttonBar() : TopButtons
+			{
+				return this._ce_buttonBar;
+			}
+			
+			public function get ui_ps_buttonBar() : TopButtons
+			{
+				return this._ce_buttonBar_preview;
+			}
+			
+			public function get ui_ce_componentChooserViewStack() : Group
+			{
+				return this._ce_componentChooserViewStack;
+			}
+			
+			public function get ui_ce_componentThumbChooser() : ComponentThumbChooserSpark
+			{
+				return this._ce_componentThumbChooser;
+			}
+			
+			public function get ui_ce_clothesChooser() : ClothesChooser
+			{
+				return this._ce_clothesChooser;
+			}
+			
+			public function get ui_ce_thumbPropertyInspector() : CcComponentPropertyInspectorSpark
+			{
+				return this._ce_thumbPropertyInspector;
+			}
+			
+			public function get ui_ce_selectedDecoration() : DecorationPanel
+			{
+				return this._ce_selectedDecoration;
+			}
+			
+			public function get ui_ce_mainViewStack() : Group
+			{
+				return this._ce_mainViewStack;
+			}
+			
+			public function get ui_ce_mainEditorComponentsContainer() : Group
+			{
+				return this._ce_mainEditorComponentsContainer;
+			}
+			
+			public function get ui_ce_charScaleChooser() : ScaleChooserSpark
+			{
+				return this._ce_charScaleChooser;
+			}
 		]]>
 	</fx:Script>
 
 	<fx:Style>
 		@namespace s "library://ns.adobe.com/flex/spark";
 		@namespace mx "library://ns.adobe.com/flex/mx";
+		@namespace aComponents "anifire.components.*";
+		@namespace components "anifire.creator.components.*";
 
 		global
 		{
-			modalTransparency: 0.7;
-			modalTransparencyColor: "0x000000";
+			layoutDirection: "ltr";
 		}
 		s|Application
 		{
 			font-size: 13;
+		}
+		s|HScrollBar
+		{
+			skinClass: ClassReference("anifire.creator.skins.DefaultHScrollBarSkin");
+		}
+		s|VScrollBar
+		{
+			skinClass: ClassReference("anifire.creator.skins.DefaultVScrollBarSkin");
 		}
 		s|TextBase,
 		s|SkinnableTextBase,
@@ -109,27 +240,72 @@
 			color: #CCCCCC;
 			fontStyle: "normal";
 		}
-		s|TextInput {
-			borderColor: #CACAD4;
-			skinClass: ClassReference("anifire.browser.skins.DefaultTextInputSkin");
+		s|RichText#errorTextDisplay
+		{
+			fontSize: 11;
 		}
-		
+		s|TextInput
+		{
+			borderColor: #CACAD4;
+			skinClass: ClassReference("anifire.creator.skins.DefaultTextInputSkin");
+		}
+		s|Button.primary
+		{
+			skinClass: ClassReference("anifire.creator.skins.PrimaryButtonSkin");
+		}
+		s|Button.default
+		{
+			skinClass: ClassReference("anifire.creator.skins.DefaultButtonSkin");
+		}
+		components|IconButton
+		{
+			skinClass: ClassReference("anifire.creator.skins.IconButtonSkin");
+		}
+		aComponents|IconButton.topToolBar
+		{
+			skinClass: ClassReference("anifire.creator.skins.TopToolBarButtonSkin");
+		}
+		components|MenuItemList
+		{
+			skinClass: ClassReference("anifire.creator.skins.MenuItemListSkin");
+		}
+		components|ColorPicker
+		{
+			skinClass: ClassReference("anifire.creator.skins.FlatColorPickerSkin");
+		}
+		components|ArrowTipContainer
+		{
+			skinClass: ClassReference("anifire.creator.skins.ArrowTipContainerSkin");
+		}
+		s|DropDownList
+		{
+			skinClass: ClassReference("anifire.creator.skins.DefaultDropDownListSkin");
+		}
+		components|ConfirmPopUp
+		{
+			skinClass: ClassReference("anifire.creator.skins.ConfirmPopUpSkin");
+			fontSize: 14;
+		}
+		s|Panel
+		{
+			skinClass: ClassReference("anifire.creator.skins.ConfirmPanelSkin");
+		}
 		
 		@font-face {
 			embedAsCFF: true;
-			src: url("fonts/files/Lato-Regular.ttf");
+			src: url("../fonts/files/Lato-Regular.ttf");
 			font-family: StudioSparkMain;
 		}
 		@font-face {
 			embedAsCFF: true;
-			src: url("fonts/files/Lato-Italic.ttf");
+			src: url("../fonts/files/Lato-Italic.ttf");
 			font-weight: 400;
 			font-style: italic;
 			font-family: StudioSparkMain;
 		}
 		@font-face {
 			embedAsCFF: true;
-			src: url("fonts/files/Lato-Bold.ttf");
+			src: url("../fonts/files/Lato-Bold.ttf");
 			font-weight: 700;
 			font-family: StudioSparkMain;
 		}
@@ -139,5 +315,90 @@
 		<s:State name="loading"/>
 		<s:State name="ready"/>
 	</s:states>
+
+	<s:Group id="mainViewStack" width="100%" height="100%" visible="false" visible.ready="true" clipAndEnableScrolling="true">
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor color="0xEEEEEE"/>
+			</s:fill>
+		</s:Rect>
+		<s:Group id="_ce_mainViewStack" width="100%" height="100%">
+			<!--<components:BodyShapeMegaChooser
+				id="_ce_bodyShapeMegaChooser" width="100%" height="100%" visible="false"/>-->
+			<s:Group id="_ce_mainEditorComponentsContainer" width="960" height="600" styleName="bgCharEditor">
+				<components:CharPreviewer
+					id="_ce_charPreviewer" x="609" y="68"
+					width="300" height="315" scaleX="1.3" scaleY="1.3"/>
+				<components:facePreview
+					id="_ce_facePreviewer" x="654" y="68" width="300" height="430" visible="false"/>
+				<s:Group id="_topControl" top="0" left="0" width="960" height="68">
+					<s:Rect width="100%" height="100%">
+						<s:fill>
+							<s:SolidColor color="0xEEEEEE"/>
+						</s:fill>
+					</s:Rect>
+					<components:TypeChooserSpark
+						id="_ce_componentTypeChooser" left="4" top="0" width="640" height="68"/>
+					<components:TopButtons id="_ce_buttonBar" right="0" width="300" height="68"/>
+					<s:Line width="100%" top="0">
+						<s:stroke>
+							<s:SolidColorStroke color="0xCCCCCC"/>
+						</s:stroke>
+					</s:Line>
+					<s:Line width="100%" bottom="0">
+						<s:stroke>
+							<s:SolidColorStroke color="0xCCCCCC"/>
+						</s:stroke>
+					</s:Line>
+				</s:Group>
+				<components:CcColorPickers
+					id="_ce_colorPicker" bottom="10" right="45" width="248" height="62"
+					biggerElementWidth="248" smallerElementWidth="248"/>
+				<components:CcComponentPropertyInspectorSpark
+					id="_ce_thumbPropertyInspector" bottom="0" right="0"/>
+				<s:Group id="_ce_componentChooserViewStack" top="68" left="0" width="654" height="532">
+					<s:Rect width="100%" height="100%">
+						<s:fill>
+							<s:SolidColor color="0xEEEEEE" alpha="0"/>
+						</s:fill>
+					</s:Rect>
+					<components:ComponentThumbChooserSpark
+						id="_ce_componentThumbChooser" biggerHeight="532" width="654" height="532"
+						smallerHeight="{532 - _ce_selectedDecoration.height}"/>
+					<components:ClothesChooser
+						id="_ce_clothesChooser" y="10" width="100%" height="250" visible="false"
+						clipContent="false" thumbChooserWidth="463" biggerHeight="70" smallerHeight="70"
+						creationPolicy="all" verticalGap="50"/>
+				</s:Group>
+				<components:DecorationPanel id="_ce_selectedDecoration" left="0" bottom="0" width="654" height="90"/>
+				<components:ScaleChooserSpark id="_ce_charScaleChooser" bottom="0" right="0"/>
+			</s:Group>
+		</s:Group>
+		<s:Group id="ccCharPreviewAndSaveScreen" width="100%" height="100%" visible="false">
+			<s:Group id="ps_interactionViewStack" x="0" y="0" width="100%" height="600">
+				<components:CharPreviewer
+					id="ps_charPreviewer" width="300" height="200" scaleX="1.5" scaleY="1.5" clipContent="false"
+					horizontalCenter="0" verticalCenter="20"/>
+				<s:Group id="ps_charPreviewCanvas" width="100%" height="100%">
+					<components:CharPreviewOption id="ps_charPreviewOptionBox" bottom="15" horizontalCenter="0"/>
+					<s:Group top="0" left="0" width="960" height="68">
+						<components:TopButtons id="_ce_buttonBar_preview" right="0" width="300" height="68"/>
+						<s:Line width="100%" top="0">
+							<s:stroke>
+								<s:SolidColorStroke color="0xCCCCCC"/>
+							</s:stroke>
+						</s:Line>
+						<s:Line width="100%" bottom="0">
+							<s:stroke>
+								<s:SolidColorStroke color="0xCCCCCC"/>
+							</s:stroke>
+						</s:Line>
+					</s:Group>
+				</s:Group>
+			</s:Group>
+		</s:Group>
+	</s:Group>
+	<component:EyeDropperScreenOverlay id="eyedropperScreenCap"/>
+	<components:CCLoadingScreen id="_creator_CCLoadingScreen1" includeIn="loading"/>
 
 </s:Application>

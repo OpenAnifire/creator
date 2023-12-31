@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"output": "bin-debug/creator.swf",
+		"accessible": true,
+		"source-path": [
+			"src"
+		],
+		"library-path": [
+			"libs",
+			"../anifire/bin/anifire.swc"
+		]
+	},
+	"files": [
+		"src/creator.mxml"
+	],
+	"copySourcePathAssets": true,
+	"htmlTemplate": "html-template",
+	"additionalOptions": "-locale en_US"
+}
